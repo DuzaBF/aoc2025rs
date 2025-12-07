@@ -22,6 +22,32 @@ fn get_neighbors(i: usize, j: usize, i_len: usize, j_len: usize) -> Vec<(usize, 
     n
 }
 
+fn find_removable(grid: &Vec<Vec<char>>) -> Vec<(usize, usize)> {
+    let mut removable: Vec<(usize, usize)> = vec![];
+    for (i, line) in grid.iter().enumerate() {
+        for (j, el) in line.iter().enumerate() {
+            let mut count: u32 = 0;
+            if *el == '@' {
+                for neighbor in get_neighbors(i, j, grid.len(), line.len()) {
+                    if grid[neighbor.0][neighbor.1] == '@' {
+                        count += 1;
+                    }
+                }
+                if count < 4 {
+                    removable.push((i, j));
+                }
+            }
+        }
+    }
+    removable
+}
+
+fn update_grid(grid: &mut Vec<Vec<char>>, removable: &Vec<(usize, usize)>) {
+    for el in removable {
+        grid[el.0][el.1] = '.';
+    }
+}
+
 pub fn solution() {
     let mut sum = 0;
     let mut grid: Vec<Vec<char>> = vec![];
@@ -35,30 +61,18 @@ pub fn solution() {
         }
     }
 
-    let mut removable: Vec<(usize, usize, u32)> = vec![];
-    for (i, line) in grid.iter().enumerate() {
-        for (j, el) in line.iter().enumerate() {
-            let mut count: u32 = 0;
-            if *el == '@' {
-                for neighbor in get_neighbors(i, j, grid.len(), line.len()) {
-                    if grid[neighbor.0][neighbor.1] == '@' {
-                        count += 1;
-                    }
-                }
-                if count < 4 {
-                    sum += 1;
-                    removable.push((i, j, count));
-                }
-            }
+    let mut removable = find_removable(&grid);
+    let mut i = 0;
+    while removable.len() > 0 {
+        sum += removable.len();
+        update_grid(&mut grid, &removable);
+        // println!("-- step {i} --");
+        for line in &grid {
+            // println!("{:?}", line)
         }
+        removable = find_removable(&grid);
+        i += 1;
     }
 
     println!("sum {}", sum);
-
-    for el in removable {
-        grid[el.0][el.1] = char::from_u32(el.2 + '0' as u32).unwrap();
-    }
-    for line in grid {
-        // println!("{:?}", line)
-    }
 }
