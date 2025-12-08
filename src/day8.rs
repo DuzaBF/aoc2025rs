@@ -106,7 +106,13 @@ fn get_value(circuits: &Circuits) -> usize {
         lengths[i] = circuit.len();
     }
     lengths.sort_by(|a, b| b.cmp(a));
-    lengths[0] * lengths[1] * lengths[2]
+    let mut result = 1;
+    for i in 0..3 {
+        if i < lengths.len() {
+            result *= lengths[i]
+        }
+    }
+    result
 }
 
 pub fn solution() {
@@ -137,9 +143,9 @@ pub fn solution() {
     let mut dist: i64 = 0;
 
     let mut merges = 0;
-    while merges < 1000 {
-        let pair_points: PairPoints;
-        let pair_circuits: PairCircuits;
+    let mut pair_points: PairPoints = PairPoints { pair: (0, 0) };
+    let mut pair_circuits: PairCircuits = PairCircuits { pair: (0, 0) };
+    while circuits.connections.len() > 1 {
         (dist, pair_points, pair_circuits) = find_next_closest(&circuits, dist);
 
         // println!(
@@ -154,5 +160,8 @@ pub fn solution() {
         // println!("{circuits}");
     }
 
-    println!("{}", get_value(&circuits));
+    println!(
+        "{}",
+        circuits.points[pair_points.pair.0].x * circuits.points[pair_points.pair.1].x
+    );
 }
