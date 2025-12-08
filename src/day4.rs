@@ -62,16 +62,13 @@ pub fn solution() {
     }
 
     let mut removable = find_removable(&grid);
-    let mut i = 0;
     while removable.len() > 0 {
         sum += removable.len();
         update_grid(&mut grid, &removable);
-        // println!("-- step {i} --");
-        for line in &grid {
-            // println!("{:?}", line)
-        }
+        // for line in &grid {
+        //     println!("{:?}", line)
+        // }
         removable = find_removable(&grid);
-        i += 1;
     }
 
     println!("sum {}", sum);

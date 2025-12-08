@@ -32,10 +32,9 @@ pub fn solution() {
     let mut sum = 0;
     let mut ranges: Vec<(u64, u64)> = vec![];
     let mut ids: Vec<u64> = vec![];
-    let mut spoiled: Vec<u64> = vec![];
     let mut divider = false;
     if let Ok(lines) = read_lines("./input/day5/input") {
-        for (i, line) in lines.map_while(Result::ok).into_iter().enumerate() {
+        for (_, line) in lines.map_while(Result::ok).into_iter().enumerate() {
             if line.len() == 0 {
                 divider = true;
                 continue;
@@ -55,11 +54,8 @@ pub fn solution() {
 
     ranges.sort_by(|a, b| a.0.cmp(&b.0));
 
-    let mut i = 0;
     for r in &ranges {
         let count = r.1 - r.0 + 1;
-        // println!("got r[{:3}] = {:16?}; count {}", i, r, count);
-        i += 1;
         sum += count;
     }
 

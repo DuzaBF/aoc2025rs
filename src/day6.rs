@@ -3,10 +3,9 @@ use crate::read_lines::read_lines;
 pub fn solution() {
     let mut nums: Vec<Vec<u64>> = vec![];
     let mut ops: Vec<(char, usize)> = vec![];
-    let mut lengths: Vec<usize> = vec![];
     let mut rev_lines: Vec<Vec<char>> = vec![];
     if let Ok(lines) = read_lines("./input/day6/input") {
-        for (i, line) in lines.map_while(Result::ok).into_iter().enumerate() {
+        for (_, line) in lines.map_while(Result::ok).into_iter().enumerate() {
             rev_lines.push(line.chars().rev().collect());
         }
     }
@@ -30,11 +29,10 @@ pub fn solution() {
     println!("{:?}", ops);
     println!("{:?}", nums);
 
-    for (i, line) in rev_lines[..rev_lines.len() - 1].iter().enumerate() {
-        let power = (rev_lines.len() - 1 - i) as u32;
+    for (_, line) in rev_lines[..rev_lines.len() - 1].iter().enumerate() {
         let mut operation = 0;
         let mut operand = 0_i32;
-        for (j, ch) in line.iter().enumerate() {
+        for (_, ch) in line.iter().enumerate() {
             if operand == ops[operation].1 as i32 {
                 operation += 1;
                 operand = -1;

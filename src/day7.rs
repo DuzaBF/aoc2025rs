@@ -1,4 +1,3 @@
-use core::num;
 use std::fmt::Display;
 
 use crate::read_lines::read_lines;
@@ -65,7 +64,7 @@ pub fn solution() {
     let mut sum = 0;
     let mut grid: Vec<Vec<char>> = vec![];
     if let Ok(lines) = read_lines("./input/day7/input") {
-        for (i, line) in lines.map_while(Result::ok).into_iter().enumerate() {
+        for (_, line) in lines.map_while(Result::ok).into_iter().enumerate() {
             grid.push(line.chars().into_iter().collect());
             // println!("{:?}", grid[i]);
         }
