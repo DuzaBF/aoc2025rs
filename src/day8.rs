@@ -1,4 +1,4 @@
-use std::{fmt::Display, mem::swap};
+use std::{fmt::Display, mem::swap, vec};
 
 use crate::read_lines::read_lines;
 
@@ -14,6 +14,7 @@ struct Point {
 struct Circuits {
     points: Vec<Point>,
     connections: Vec<Vec<usize>>,
+    distances: Vec<Vec<i64>>,
 }
 
 #[derive(Debug)]
@@ -49,13 +50,23 @@ fn distance2(first: &Point, second: &Point) -> i64 {
     (first.x - second.x).pow(2) + (first.y - second.y).pow(2) + (first.z - second.z).pow(2)
 }
 
+fn calc_distances(circuits: &mut Circuits) {
+    for i in 0..circuits.points.len() {
+        circuits.distances.push(vec![0; circuits.points.len() - i]);
+        for j in (i + 1)..circuits.points.len() {
+            let dist = distance2(&circuits.points[i], &circuits.points[j]);
+            circuits.distances[i][circuits.points.len() - j] = dist;
+        }
+    }
+}
+
 fn find_next_closest(circuits: &Circuits, last_dist: i64) -> (i64, PairPoints, PairCircuits) {
     let mut min = i64::MAX;
     let mut pair_points: PairPoints = PairPoints { pair: (0, 0) };
 
     for i in 0..circuits.points.len() {
         for j in i + 1..circuits.points.len() {
-            let dist = distance2(&circuits.points[i], &circuits.points[j]);
+            let dist = circuits.distances[i][circuits.points.len() -j];
             if dist < min && dist > last_dist {
                 min = dist;
                 pair_points.pair = (circuits.points[i].id, circuits.points[j].id);
@@ -119,6 +130,7 @@ pub fn solution() {
     let mut circuits: Circuits = Circuits {
         points: vec![],
         connections: vec![],
+        distances: vec![]
     };
     if let Ok(lines) = read_lines("./input/day8/input") {
         for (i, line) in lines.map_while(Result::ok).into_iter().enumerate() {
@@ -138,13 +150,15 @@ pub fn solution() {
             circuits.connections[i].push(i);
         }
     }
-    println!("{circuits}");
+    // println!("{circuits}");
+
+    calc_distances(&mut circuits);
 
     let mut dist: i64 = 0;
 
-    let mut merges = 0;
+    let mut _merges = 0;
     let mut pair_points: PairPoints = PairPoints { pair: (0, 0) };
-    let mut pair_circuits: PairCircuits = PairCircuits { pair: (0, 0) };
+    let mut pair_circuits: PairCircuits;
     while circuits.connections.len() > 1 {
         (dist, pair_points, pair_circuits) = find_next_closest(&circuits, dist);
 
@@ -155,10 +169,12 @@ pub fn solution() {
 
         merge(&mut circuits, pair_circuits);
 
-        merges += 1;
+        _merges += 1;
         // println!("----{merges}----");
         // println!("{circuits}");
     }
+
+    println!("value {}", get_value(&circuits));
 
     println!(
         "{}",

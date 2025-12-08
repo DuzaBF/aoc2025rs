@@ -10,5 +10,9 @@ pub mod day8;
 pub mod read_lines;
 
 fn main() {
-    day8::solution()
+    use std::time::Instant;
+    let now = Instant::now();
+    day8::solution();
+    let elapsed = now.elapsed();
+    println!("Elapsed: {:.2?}", elapsed);
 }
